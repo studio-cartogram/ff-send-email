@@ -1,0 +1,12 @@
+{
+  "name": "ff-send-email",
+  "alias": "ff-send-email",
+  "type": "npm",
+  "env": {
+    "LOG": "@log",
+    "SENDGRID_APIKEY": "@sendgrid_apikey",
+    "GC_PAT_EMAILS": "@gc_pat_emails",
+    "TOKEN": "@token",
+    "GRAPHQL_ENDPOINT": "@graphql_endpoint"
+  }
+}
