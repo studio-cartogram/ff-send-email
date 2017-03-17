@@ -3,7 +3,6 @@ const log = process.env.LOG
 require('now-logs')(log)
 const { json, send } = require('micro')
 const request = require('request')
-const config = require('./config');
 const sendgrid = require('sendgrid')(process.env.SENDGRID_APIKEY);
 const helper = require('sendgrid').mail;
 const token = process.env.TOKEN
@@ -54,7 +53,7 @@ module.exports = async (req, res) => {
   const { parse } = require('url');
   const { query } = parse(req.url, true)
   if (token !== query.token) {
-    console.log('Token in query does not match environment variable', token, query.token)
+    console.log('Token in query does not match environment variable')
     send(res, 400, { error: 'Token mismatch' })
   }
 
@@ -65,7 +64,8 @@ module.exports = async (req, res) => {
     id,
     fondfolio,
     answers,
-  } =  contribution
+    emailSent,
+  } = contribution
 
   const {
     receiver,
@@ -73,11 +73,13 @@ module.exports = async (req, res) => {
   } = fondfolio
 
   //Check if email sent already
-  if (contribution.emailSent) {
+  if (emailSent) {
     const msg = `${id} email was already sent`
+    console.log(msg)
     send(res, 400, { error: msg })
   }
 
+  // Make the email
   const from_email = new helper.Email('hello@fondfolio.com', 'Fondfolio')
   const to_email = new helper.Email('mseccafien@gmail.com', 'matt')
   const subject = `New Fondfolio Contribution for ${title}`
@@ -105,7 +107,7 @@ module.exports = async (req, res) => {
   sendgrid.API(requestToSg, (error, response) => {
     if (error) {
       console.log(error)
-      send(res, 400, { error: `Contribution email for ${id} was not sent. ${error}` })
+      return send(res, 400, { error: `Contribution email for ${id} was not sent. ${error}` })
     }
     // Fire the request to Graph.cool endpoint
     const requestConfig = {
@@ -123,10 +125,9 @@ module.exports = async (req, res) => {
       console.log(msg)
       send(res, 400, { error: msg })
     }).on('response', r => {
-      const msg = `Contribution ${id} was sent`
+      const msg = `Contribution ${id} email was sent and contribution updated`
       console.log(msg)
       send(res, 200, { message: msg })
     })
-
   })
 }

@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "micro index.js",
-    "dev": "nodemon --exec micro index.js"
+    "start": "micro index.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,8 +15,5 @@
     "now-logs": "0.0.7",
     "request": "^2.81.0",
     "sendgrid": "^4.8.1"
-  },
-  "devDependencies": {
-    "nodemon": "^1.11.0"
   }
 }
